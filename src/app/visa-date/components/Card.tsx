@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { getOtp, getTimesSlots, payInvoice, verifyOtp } from "../utils";
 import { TaskAlt } from "@mui/icons-material";
 import { IOtpResponse } from "@/app/constens/queueManage";
+import Actions from "./Actions";
 
 const Card = ({ data }: { data: RequestPayload }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -219,7 +220,8 @@ const Card = ({ data }: { data: RequestPayload }) => {
         </Box>
 
         <Box sx={{ padding: "1rem", bgcolor: "#f5f5f5", width: "100%" }}>
-          <Grid container spacing={2}>
+          <Actions data={data} />
+          {/* <Grid container spacing={2}>
             <Grid item xs={6}>
               <Typography
                 sx={{
@@ -509,7 +511,7 @@ const Card = ({ data }: { data: RequestPayload }) => {
                 )}
               </Box>
             </Grid>
-          </Grid>
+          </Grid> */}
         </Box>
       </Paper>
     </Grid>

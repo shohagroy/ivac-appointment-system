@@ -62,16 +62,19 @@ export const getVerifyErrorResponse: IOtpResponse = {
   message: ["OTP not found with this mobile number"],
 };
 
-export const getTimesSlotsSuccessResponse: IOtpResponse = {
-  status: "SUCCESS",
-  code: 200,
-  slot_dates: [{ hour: "10:00" }, { hour: "11:00" }, { hour: "12:00" }],
-  slot_times: [dateAfter5Days],
-  data: {
-    slot_times: [],
-    slot_dates: [dateAfter5Days], //"2024-10-16"
-    status: true,
-    error_reason: "",
-  },
-  message: [""],
+export const getTimesSlotsSuccessResponse = {
+  status: "OK",
+  data: [""],
+  slot_dates: ["2024-10-17"],
+  slot_times: [
+    {
+      id: 142049,
+      ivac_id: 17,
+      visa_type: 13,
+      hour: 10,
+      date: "2024-10-17",
+      availableSlot: 1,
+      time_display: "10:00 - 10:59",
+    },
+  ],
 };

@@ -1,49 +1,6 @@
 import { RequestPayload } from "@/app/data";
 import axios from "axios";
 
-// export const getOtp = async (
-//   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-//   setOtpResponse: React.Dispatch<React.SetStateAction<any>>,
-//   setErrorMessages: React.Dispatch<React.SetStateAction<string[]>>,
-//   data: RequestPayload,
-//   recall: number
-// ) => {
-//   setIsLoading(true);
-//   setOtpResponse(null);
-//   setErrorMessages([]);
-
-//   const makeRequest = async (attempt: number): Promise<void> => {
-//     try {
-//       const response = await axios.post("/api/v1/queue-manage", data, {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         // timeout: 30000, // 30 seconds timeout
-//       });
-
-//       // If successful, update OTP response and stop loading
-//       setIsLoading(false);
-//       setOtpResponse(response.data);
-//     } catch (error: any) {
-//       const errorMessage =
-//         error?.response?.data?.message[0] || "Request timed out,";
-//       setErrorMessages((prevErrors) => [...prevErrors, errorMessage]);
-
-//       if (attempt + 1 < recall) {
-//         console.log(`Retrying... Attempt ${attempt + 1}`);
-//         setTimeout(() => makeRequest(attempt + 1), 100);
-//       } else {
-//         setIsLoading(false);
-//         const message = `Failed after ${recall} attempts, please retry.`;
-//         console.error(message);
-//         setErrorMessages((prevErrors) => [...prevErrors, message]);
-//       }
-//     }
-//   };
-
-//   makeRequest(0);
-// };
-
 export const getOtp = async (
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setOtpResponse: React.Dispatch<React.SetStateAction<any>>,
@@ -157,8 +114,21 @@ export const getTimesSlots = async (
         // timeout: 30000,
       });
 
-      setIsLoading(false);
-      setVerifyResponse(response.data);
+      if (!response?.data?.slot_times?.length) {
+        if (attempt + 1 < recall) {
+          console.log(`Retrying... Attempt ${attempt + 1}`);
+          setTimeout(() => makeRequest(attempt + 1), 100);
+          setErrorMessages((prevErrors) => [
+            ...prevErrors,
+            "No slots available.",
+          ]);
+        } else {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+        setVerifyResponse(response.data);
+      }
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message[0] || "Request timed out,";

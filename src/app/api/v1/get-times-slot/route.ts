@@ -10,11 +10,38 @@ export const POST = async (req: Request) => {
   const body = await req.json();
 
   // return new Response(JSON.stringify(getTimesSlotsSuccessResponse), {
-  //   status: 500,
+  //   status: 200,
   //   headers: {
   //     "Content-Type": "application/json",
   //   },
   // });
+
+  // return new Response(
+  //   JSON.stringify({
+  //     status: "OK",
+  //     data: [""],
+  //     slot_dates: [],
+  //     slot_times: [],
+  //   }),
+  //   {
+  //     status: 200,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
+  // return new Response(
+  //   JSON.stringify({
+  //     status: "FAIL",
+  //     errors: " Available slot is less than zero",
+  //   }),
+  //   {
+  //     status: 200,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
 
   // return new Response(JSON.stringify(getVerifyErrorResponse), {
   //   status: 500,
