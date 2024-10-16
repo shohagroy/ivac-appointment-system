@@ -1,0 +1,15 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // Change "error" to "warn" to log a warning instead of throwing an error
+      {
+        "args": "none", // Ignore unused function arguments
+        "caughtErrors": "none", // Ignore unused catch block errors
+        "varsIgnorePattern": ".*", // Ignore all unused variables
+        "ignoreRestSiblings": true // Ignore the rest siblings, so destructuring won't cause issues
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "off" // Turn off the rule globally
+  }
+}

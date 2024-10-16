@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  super_admin
+  admin
+}
+
+// new code start here
+
+model User {
+  id       String @id @default(uuid())
+  fullName String
+  email    String @unique
+  password String
+  role     Role
+  contact  String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Address   Address[]
+
+  @@map("users")
+}
+
+// old code 
+
+enum Gender {
+  male
+  female
+}
+
+model Country {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  countryCode String  @unique
+  isActive    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses Address[]
+  idTypes   IDType[]
+
+  stepFilds StepFild[]
+
+  @@map("countries")
+}
+
+model FormStep {
+  id     String @id @default(uuid())
+  tittle String
+  value  String @unique
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  stepFilds StepFild[]
+
+  @@map("form_steps")
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  line1      String
+  line2      String?
+  countryId  String
+  postalCode String
+  User       User?   @relation(fields: [userId], references: [id])
+
+  country Country @relation(fields: [countryId], references: [id])
+  userId  String?
+
+  @@map("addresses")
+}
+
+model IDType {
+  id        String @id @default(uuid())
+  tittle    String @unique
+  countryId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  country   Country  @relation(fields: [countryId], references: [id])
+
+  @@map("id_types")
+}
+
+model StepFild {
+  id          String  @id @default(uuid())
+  name        String
+  label       String
+  placeholder String
+  type        String
+  errorText   String?
+  countryId   String
+  stepValue   String
+  isRequired  Boolean @default(false)
+
+  country  Country  @relation(fields: [countryId], references: [id])
+  formStep FormStep @relation(fields: [stepValue], references: [value])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("step_filds")
+}
