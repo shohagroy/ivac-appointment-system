@@ -1,10 +1,8 @@
 "use client";
-// import { images } from "@/assets/images";
 import FormProvaider from "@/components/Forms";
 import FormInputField, { IInputType } from "@/components/Forms/FormInputField";
 import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import { FormikValues } from "formik";
-import Image from "next/image";
 import React from "react";
 import * as Yup from "yup";
 
@@ -16,6 +14,7 @@ const validateSchema = Yup.object().shape({
 const LoginPage: React.FC = () => {
   const onSubmit = async (values: FormikValues): Promise<void> => {
     try {
+      console.log(values);
       // const response = await login(values).unwrap();
       // if (!response.success) {
       //   dispatch(
@@ -50,17 +49,21 @@ const LoginPage: React.FC = () => {
     >
       <Paper
         sx={{
+          width: { xs: "90%", md: "25%" },
           padding: "2rem",
           boxShadow: { xs: "none", md: "none" },
         }}
       >
-        {/* <Image
-          src={images?.imperialLogo}
-          height={100}
-          width={300}
-          alt="logo"
-          layout="intrinsic"
-        /> */}
+        <Typography
+          sx={{
+            fontFamily: "inherit",
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            marginBottom: ".5rem",
+          }}
+        >
+          IT-Hub.com
+        </Typography>
         <Divider
           sx={{
             marginTop: "0.2rem",
