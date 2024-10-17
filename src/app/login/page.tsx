@@ -1,8 +1,12 @@
 "use client";
 import FormProvaider from "@/components/Forms";
 import FormInputField, { IInputType } from "@/components/Forms/FormInputField";
+import { useLoginMutation } from "@/lib/Redux/features/auth/authApi";
+import { openSnackbar } from "@/lib/Redux/features/snackbar/snackbarSlice";
+import { useAppDispatch } from "@/lib/Redux/store";
 import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import { FormikValues } from "formik";
+import { useRouter } from "next/navigation";
 import React from "react";
 import * as Yup from "yup";
 
@@ -12,28 +16,34 @@ const validateSchema = Yup.object().shape({
 });
 
 const LoginPage: React.FC = () => {
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  console.log(isLoading);
+
   const onSubmit = async (values: FormikValues): Promise<void> => {
     try {
-      console.log(values);
-      // const response = await login(values).unwrap();
-      // if (!response.success) {
-      //   dispatch(
-      //     snackbarSliceActions.open({
-      //       type: "error",
-      //       message: response.message,
-      //     })
-      //   );
-      // } else {
-      //   router.replace("/");
-      //   dispatch(
-      //     snackbarSliceActions.open({
-      //       type: "success",
-      //       message: response.message,
-      //     })
-      //   );
-      // }
+      const response = await login(values).unwrap();
+
+      if (!response.success) {
+        dispatch(
+          openSnackbar({
+            type: "error",
+            message: response.message,
+          })
+        );
+      } else {
+        router.replace("/");
+        dispatch(
+          openSnackbar({
+            type: "success",
+            message: response.message,
+          })
+        );
+      }
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
 
@@ -109,9 +119,10 @@ const LoginPage: React.FC = () => {
                   textTransform: "none",
                   width: "150px",
                   height: "40px",
+                  fontFamily: "inherit",
                 }}
               >
-                Login
+                {isLoading ? "Loading..." : "Login"}
               </Button>
             </Box>
           </Box>
