@@ -1,3 +1,4 @@
+import ApiError from "@/server/ErrorHandelars/ApiError";
 import prisma from "@/server/prisma";
 import { hashedPassword } from "@/server/utils/hashedPassword";
 import { jwtHelpers } from "@/server/utils/jwtHelpers";
@@ -12,7 +13,7 @@ const create = async (data: User) => {
   });
 
   if (user) {
-    // throw new ApiError(httpStatus.BAD_REQUEST, "User already exists");
+    throw new ApiError(httpStatus.BAD_REQUEST, "User already exists");
   }
 
   const userPassword = await hashedPassword.createhas(data?.password);
@@ -35,11 +36,11 @@ export const login = async (data: { username: string; password: string }) => {
   });
 
   if (!user) {
-    // throw new ApiError(httpStatus.UNAUTHORIZED, "User not found");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "User not found");
   }
 
   if (!user?.isActive) {
-    // throw new ApiError(httpStatus.UNAUTHORIZED, "User block by admin");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "User block by admin");
   }
 
   const isPasswordCorrect = await hashedPassword.comparePassword(
@@ -48,13 +49,8 @@ export const login = async (data: { username: string; password: string }) => {
   );
 
   if (!isPasswordCorrect) {
-    // throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid credentials");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid credentials");
   }
-
-  //   await userControllers.updateOne(
-  //     { ...user, lastVisit: new Date(Date.now()) },
-  //     user?.id
-  //   );
 
   const token = jwtHelpers.createToken(user, "24H");
 
@@ -76,10 +72,10 @@ const getLoginUser = async (token: string) => {
   const user = await getUserById(tokenInfo.id);
 
   if (!user) {
-    // throw new ApiError(
-    //   httpStatus.UNAUTHORIZED,
-    //   "You are not permitted to perform this action"
-    // );
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "You are not permitted to perform this action"
+    );
   }
   return user;
 };
@@ -92,7 +88,7 @@ const getUserById = async (id: string) => {
   });
 
   if (!user) {
-    // throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
 
   const { password, ...other } = user;
