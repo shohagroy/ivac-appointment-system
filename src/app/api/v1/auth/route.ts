@@ -1,32 +1,25 @@
-import {
-  getOtpSuccessResponse,
-  getTimesSlotsSuccessResponse,
-  getVerifyErrorResponse,
-  getVerifySuccessResponse,
-} from "@/app/constens/queueManage";
-import axios from "axios";
-import authControllers from "../../../../server/controllers/auth";
+import ApiError from "@/server/ErrorHandelars/ApiError";
+import catchAsync, { CustomRequest } from "@/server/helpers/catchAsync";
+import sendResponse from "@/server/helpers/sendResponse";
+import httpStatus from "http-status";
+import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
-  try {
-    const body = await req.json();
-    const response = await authControllers.create(body);
+export const GET = catchAsync(
+  async (req: CustomRequest, res: Response): Promise<NextResponse> => {
+    const user = req.user;
 
-    return new Response(
-      JSON.stringify({
-        status: 200,
-        success: true,
-        message: "user created successfully",
-        data: response,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } catch (error) {
-    console.log(error);
+    if (!user?.id) {
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        "You are not permitted to perform this action"
+      );
+    }
+
+    return await sendResponse({
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User Get Successfully",
+      data: user,
+    });
   }
-};
+);

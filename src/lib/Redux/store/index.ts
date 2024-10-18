@@ -3,18 +3,22 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import snackbarReducer from "../features/snackbar/snackbarSlice";
+import { baseApiSlice } from "../features/baseApi/baseApiSlice";
+import envConfig from "@/configs/envConfig";
+import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
   reducer: {
-    // [baseApi.reducerPath]: baseApi.reducer,
+    [baseApiSlice.reducerPath]: baseApiSlice.reducer,
     snackbar: snackbarReducer,
+    auth: authReducer,
   },
-  // middleware: (getDefaultMiddleware) =>
-  //   getDefaultMiddleware()
-  //     .concat(baseApi.middleware)
-  //     .concat(backendBaseApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .concat(baseApiSlice.middleware)
+      .concat(baseApiSlice.middleware),
 
-  // devTools: envConfig.environment !== "production",
+  devTools: envConfig.environment !== "production",
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -4,6 +4,7 @@ import FormInputField, { IInputType } from "@/components/Forms/FormInputField";
 import { useLoginMutation } from "@/lib/Redux/features/auth/authApi";
 import { openSnackbar } from "@/lib/Redux/features/snackbar/snackbarSlice";
 import { useAppDispatch } from "@/lib/Redux/store";
+import { setAuthToken } from "@/utils/auth";
 import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import { FormikValues } from "formik";
 import { useRouter } from "next/navigation";
@@ -20,8 +21,6 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  console.log(isLoading);
-
   const onSubmit = async (values: FormikValues): Promise<void> => {
     try {
       const response = await login(values).unwrap();
@@ -34,6 +33,7 @@ const LoginPage: React.FC = () => {
           })
         );
       } else {
+        setAuthToken(response?.data?.token);
         router.replace("/");
         dispatch(
           openSnackbar({

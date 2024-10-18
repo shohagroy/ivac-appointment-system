@@ -10,33 +10,28 @@ export interface CustomRequest extends Request {
 const catchAsync =
   (handler: (req: Request, res: Response) => void) =>
   async (req: Request, res: Response) => {
-    const tokenInfo = cookies().get("token")?.value;
+    const tokenInfo = cookies().get("auth_token")?.value;
     const methode = req.method;
     const pathName = req?.url.split("/api")[1];
 
     try {
-      return await handler(req, res);
+      if (pathName === "/v1/auth/login" && methode === "POST") {
+        return await handler(req, res);
+      } else {
+        const userInfo = await authControllers?.getLoginUser(
+          tokenInfo as string
+        );
+
+        if (userInfo?.id) {
+          (req as CustomRequest).user = userInfo;
+        } else {
+          (req as CustomRequest).user = {};
+        }
+        return await handler(req, res);
+      }
     } catch (error) {
       return errorHandler(error as Error);
     }
-    // try {
-    //   if (pathName === "/auth/login" && methode === "POST") {
-    //     return await handler(req, res);
-    //   } else {
-    //     const userInfo = await authControllers?.getLoginUser(
-    //       tokenInfo as string
-    //     );
-
-    //     if (userInfo?.id) {
-    //       (req as CustomRequest).user = userInfo;
-    //     } else {
-    //       (req as CustomRequest).user = {};
-    //     }
-    //     return await handler(req, res);
-    //   }
-    // } catch (error) {
-    //   return errorHandler(error as Error);
-    // }
   };
 
 export default catchAsync;
