@@ -1,4 +1,3 @@
-// import theme from "@/themes";
 import theme from "@/theme";
 import {
   Box,
@@ -15,7 +14,7 @@ import React from "react";
 
 interface ISelect {
   name: string;
-  options: { label: string; value: string }[];
+  options: { label: string; value: any }[];
   placeholder?: string;
   label?: string;
   disableClearable?: boolean;
@@ -35,7 +34,12 @@ const FormSelectField: React.FC<ISelect> = ({
   inline,
 }) => {
   return (
-    <Box maxWidth={"500px"}>
+    <Box
+      maxWidth={"500px"}
+      display={"flex"}
+      alignItems={{ xs: "center", md: "start" }}
+      flexDirection={{ xs: "column", md: inline ?? false ? "row" : "column" }}
+    >
       <Typography
         variant="body1"
         marginBottom={inline ?? false ? "0px" : "10px"}

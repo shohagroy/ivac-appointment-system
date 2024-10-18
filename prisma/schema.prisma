@@ -29,7 +29,20 @@ model User {
   @@map("users")
 }
 
-// old code 
+model Client {
+  id          String  @id @default(uuid())
+  companyName String  @unique()
+  propritor   String
+  email       String  @unique
+  contact     String
+  address     String
+  isActive    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("clients")
+}
 
 enum Gender {
   male

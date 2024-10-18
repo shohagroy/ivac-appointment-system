@@ -1,28 +1,162 @@
 "use client";
 
-import { Suspense } from "react";
-import { Box, LinearProgress } from "@mui/material";
-import { useGetLoginUserQuery } from "@/lib/Redux/features/auth/authApi";
-import GlobalLoader from "@/components/GlobalLoader";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/lib/Redux/store";
+import SideNav from "@/components/SideNav";
+import TopNav from "@/components/TopNav";
+import { Box, Drawer, LinearProgress } from "@mui/material";
+import React, { Suspense, useState } from "react";
+import {
+  AssuredWorkload,
+  BarChart,
+  Business,
+  Description,
+  Diversity3,
+  Groups2,
+  Message,
+  Settings,
+} from "@mui/icons-material";
+import ProtectedRouteHOC from "@/lib/ProtectedRoute";
+import theme from "@/theme";
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const router = useRouter();
-  const { isLoading } = useGetLoginUserQuery({});
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const [open, setOpen] = useState<boolean>(false);
 
-  const { user } = useAppSelector((state) => state?.auth);
-
-  if (isLoading) return <GlobalLoader height="100vh" />;
-  if (!user?.id) router.push("/login");
+  const items = [
+    {
+      label: "Overview",
+      path: "/",
+      icon: <BarChart />,
+    },
+    {
+      label: "All Clients",
+      path: "/clients",
+      icon: <Groups2 />,
+    },
+    {
+      label: "All Investors",
+      path: "/investor",
+      icon: <AssuredWorkload />,
+    },
+    {
+      label: "Messaging",
+      path: "/messaging",
+      icon: <Message />,
+    },
+    // {
+    //   label: "Sales",
+    //   path: "/",
+    //   icon: <Business />,
+    //   subPath: [
+    //     {
+    //       label: "Direct Invoice",
+    //       path: "/sales/direct-invoice",
+    //     },
+    //     {
+    //       label: "Direct Delivery",
+    //       path: "/sales/direct-delivery",
+    //     },
+    //     {
+    //       label: "Sales Orders",
+    //       path: "/sales/sales-orders",
+    //     },
+    //   ],
+    // },
+    // {
+    //   label: "Purchases",
+    //   path: "/purchases",
+    //   icon: <Description />,
+    //   subPath: [
+    //     {
+    //       label: "Purchase Orders",
+    //       path: "/purchases/purchase-orders",
+    //     },
+    //     {
+    //       label: "Purchase Invoices",
+    //       path: "/purchases/purchase-invoices",
+    //     },
+    //   ],
+    // },
+    {
+      label: "Settings",
+      path: "/settings",
+      icon: <Settings />,
+      subPath: [
+        {
+          label: "Company Setup",
+          path: "/settings/company-setup",
+        },
+        {
+          label: "User Accounts",
+          path: "/settings/user-accounts",
+        },
+        {
+          label: "SMS Setup",
+          path: "/settings/sms-setup",
+        },
+      ],
+    },
+  ];
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Suspense fallback={<LinearProgress />}>{children}</Suspense>
+    <Box
+      display="flex"
+      minHeight={"100vh"}
+      sx={{ bgcolor: theme.colorConstants.whitishGray }}
+    >
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+        }}
+        width={"15%"}
+        position={"fixed"}
+      >
+        <SideNav setOpen={setOpen} navigateItems={items} />
+      </Box>
+
+      <Box
+        marginLeft={{ xs: "0px", md: "15%" }}
+        width={{ xs: "100%", md: "85%" }}
+      >
+        <Box
+          position={"fixed"}
+          width={{ xs: "100%", md: "85%" }}
+          zIndex={10}
+          bgcolor={theme.colorConstants.whitishGray}
+        >
+          <TopNav setOpen={setOpen} open={open} />
+        </Box>
+
+        <Box
+          zIndex={5}
+          marginTop={{ xs: "70px", md: "100px" }}
+          sx={{ overflow: "hidden" }}
+        >
+          <Suspense fallback={<LinearProgress />}>{children}</Suspense>
+        </Box>
+      </Box>
+
+      <Drawer
+        sx={{
+          // width: "100%",
+          // width: { xs: "100%", md: "15%" },
+          "& .MuiDrawer-paper": {
+            width: "300px",
+            boxSizing: "border-box",
+            "@media (min-width: 900px)": {
+              // width: "100%",
+            },
+          },
+          "@media (min-width: 900px)": {
+            // width: "300px",
+          },
+        }}
+        variant="persistent"
+        anchor="left"
+        open={open}
+      >
+        <SideNav setOpen={setOpen} navigateItems={items} />
+      </Drawer>
     </Box>
   );
-}
+};
+
+export default ProtectedRouteHOC(DashboardLayout);
