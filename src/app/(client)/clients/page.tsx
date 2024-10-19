@@ -35,7 +35,13 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 
 const validateSchema = Yup.object().shape({
-  phone: Yup.string()
+  companyName: Yup.string().required("companyName is required"),
+  propritor: Yup.string().required("Propritor is required"),
+  address: Yup.string().required("address is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  contact: Yup.string()
     .required("Phone Number is Required")
     .matches(/^\d{11}$/, "Phone Number must be exactly 11 digits"),
 });
@@ -79,9 +85,10 @@ const ClientsListing = () => {
   };
 
   const submitHandler = async (values: FormikValues) => {
+    console.log(values);
     let response;
     try {
-      if (!values?._id) {
+      if (!values?.id) {
         response = await createClient(values).unwrap();
       } else {
         response = await updateClient(values).unwrap();
@@ -209,6 +216,11 @@ const ClientsListing = () => {
       width: "120px",
     },
     {
+      label: "Address",
+      align: "left",
+      width: "120px",
+    },
+    {
       label: "Status",
       align: "left",
       width: "100px",
@@ -226,7 +238,7 @@ const ClientsListing = () => {
       companyName: item.companyName,
       propritor: item.propritor,
       contact: item.contact,
-      email: item.contact,
+      email: item.email,
       address: item.address,
       status: item.isActive ? "Active" : "Deactive",
     };
@@ -450,10 +462,10 @@ const ClientsListing = () => {
 
           <Box marginTop={{ xs: "30px", md: "16px" }}>
             <FormInputField
-              name="proprietor"
-              label="Proprietor Name"
+              name="propritor"
+              label="Propritor Name"
               required
-              placeholder="Enter Proprietor Name"
+              placeholder="Enter Propritor Name"
             />
           </Box>
 
