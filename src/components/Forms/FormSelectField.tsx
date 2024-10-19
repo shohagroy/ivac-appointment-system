@@ -34,12 +34,7 @@ const FormSelectField: React.FC<ISelect> = ({
   inline,
 }) => {
   return (
-    <Box
-      maxWidth={"500px"}
-      display={"flex"}
-      alignItems={{ xs: "center", md: "start" }}
-      flexDirection={{ xs: "column", md: inline ?? false ? "row" : "column" }}
-    >
+    <Box maxWidth={"500px"}>
       <Typography
         variant="body1"
         marginBottom={inline ?? false ? "0px" : "10px"}
@@ -57,6 +52,7 @@ const FormSelectField: React.FC<ISelect> = ({
           const selectedOption = options?.find(
             (option) => option.value === field.value
           );
+
           return (
             <>
               {searchableField !== undefined && searchableField !== null ? (
@@ -83,6 +79,7 @@ const FormSelectField: React.FC<ISelect> = ({
                       }}
                       {...params}
                       name={name}
+                      required
                       variant="outlined"
                       inputProps={{
                         ...params.inputProps,

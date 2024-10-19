@@ -12,8 +12,6 @@ export default function ProtectedRouteHOC<P extends object>(
     const { data, isLoading } = useGetLoginUserQuery({});
     const router = useRouter();
 
-    console.log(data?.data);
-
     const loginUser = data?.data;
 
     if (isLoading) {

@@ -32,8 +32,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       icon: <Groups2 />,
     },
     {
-      label: "All Investors",
-      path: "/investor",
+      label: "Visa Files",
+      path: "/visa-files",
       icon: <AssuredWorkload />,
     },
     {

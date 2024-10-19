@@ -2,14 +2,7 @@ import prisma from "@/server/prisma";
 import { Client } from "@prisma/client";
 
 const create = async (data: Client) => {
-  console.log(data);
-  try {
-    const response = await prisma.client.create({ data });
-
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await prisma.client.create({ data });
 };
 
 const update = async (data: Client) => {

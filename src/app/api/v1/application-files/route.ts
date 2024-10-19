@@ -1,4 +1,5 @@
-import clientsControllers from "@/server/controllers/clients";
+// import clientsControllers from "@/server/controllers/clients";
+import applicationControllers from "@/server/controllers/files";
 import ApiError from "@/server/ErrorHandelars/ApiError";
 import catchAsync, { CustomRequest } from "@/server/helpers/catchAsync";
 import sendResponse from "@/server/helpers/sendResponse";
@@ -18,12 +19,12 @@ export const POST = catchAsync(
       );
     }
 
-    const response = await clientsControllers.create(data);
+    const response = await applicationControllers.create(data);
 
     return await sendResponse({
       statusCode: httpStatus.OK,
       success: true,
-      message: "Clients Create Successfully",
+      message: "Files Create Successfully",
       data: response,
     });
   }
@@ -40,12 +41,12 @@ export const GET = catchAsync(
       );
     }
 
-    const response = await clientsControllers.getAll();
+    const response = await applicationControllers.getAll();
 
     return await sendResponse({
       statusCode: httpStatus.OK,
       success: true,
-      message: "Clients Get Successfully",
+      message: "Applications files Get Successfully",
       data: response,
     });
   }
@@ -64,12 +65,12 @@ export const PATCH = catchAsync(
       );
     }
 
-    const response = await clientsControllers.update(data);
+    const response = await applicationControllers.update(data);
 
     return await sendResponse({
       statusCode: httpStatus.OK,
       success: true,
-      message: "Clients Update Successfully",
+      message: "Application file Update Successfully",
       data: response,
     });
   }
@@ -88,12 +89,12 @@ export const DELETE = catchAsync(
       );
     }
 
-    const response = await clientsControllers.deleteOne(data);
+    const response = await applicationControllers.deleteOne(data);
 
     return await sendResponse({
       statusCode: httpStatus.OK,
       success: true,
-      message: "Clients Delete Successfully",
+      message: "Application file Delete Successfully",
       data: response,
     });
   }

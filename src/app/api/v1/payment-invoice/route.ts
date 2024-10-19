@@ -4,6 +4,17 @@ export const POST = async (req: Request) => {
   const body = await req.json();
 
   try {
+    // const response = await axios.post(
+    //   "http://localhost:3000/api/v1/queue-manage",
+    //   body,
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     maxRedirects: 0,
+    //   }
+    // );
+
     const response = await axios.post(
       "https://payment.ivacbd.com/slot_pay_now",
       body,
@@ -11,10 +22,9 @@ export const POST = async (req: Request) => {
         headers: {
           "Content-Type": "application/json",
         },
+        maxRedirects: 0,
       }
     );
-
-    console.log(response?.data);
 
     // Check if the response requires a redirect
     if (response.data?.redirectUrl) {

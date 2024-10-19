@@ -18,6 +18,7 @@ interface IInput {
   inline?: boolean;
   required?: boolean;
   errorMessage?: boolean;
+  multiline?: boolean;
 }
 
 const FormInputField: React.FC<IInput> = ({
@@ -29,6 +30,7 @@ const FormInputField: React.FC<IInput> = ({
   inline,
   required,
   errorMessage,
+  multiline,
 }) => {
   return (
     <Box
@@ -51,6 +53,9 @@ const FormInputField: React.FC<IInput> = ({
       <Field name={name} type={type}>
         {({ field, meta }: FieldProps) => (
           <TextField
+            multiline={multiline ?? false}
+            maxRows={15}
+            minRows={15}
             size="small"
             {...field}
             type={type}
