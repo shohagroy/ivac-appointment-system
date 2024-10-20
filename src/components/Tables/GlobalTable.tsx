@@ -1,4 +1,3 @@
-import { IUser } from "@/models/user";
 import theme from "@/theme";
 import { Clear, DriveFileRenameOutline } from "@mui/icons-material";
 import {
@@ -17,6 +16,7 @@ import {
   styled,
   tableCellClasses,
 } from "@mui/material";
+import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -50,7 +50,7 @@ interface IProps {
   tableItems: { [key: string]: string }[];
   deleteHandler?: (username: string) => void;
   updateHandler?: (username: string) => void;
-  loginUser?: IUser;
+  loginUser?: User;
   isNavigate?: boolean;
 }
 const GlobalTable: React.FC<IProps> = ({
@@ -157,7 +157,7 @@ const GlobalTable: React.FC<IProps> = ({
                             disabled={
                               loginUser?.role !== "super_admin" &&
                               loginUser?.role !== "admin" &&
-                              loginUser?._id !== item?._id
+                              loginUser?.id !== item?._id
                             }
                             onClick={() => updateHandler(item?._id as string)}
                             color="primary"
