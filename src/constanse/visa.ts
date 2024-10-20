@@ -38,6 +38,16 @@ export const ivac = [
   },
 ];
 
+export const visa = [
+  {
+    id: 13,
+    type_name: "MEDICAL/MEDICAL ATTENDANT VISA",
+    order: 2,
+    is_active: 1,
+    $$hashKey: "object:50",
+  },
+];
+
 export const centerOptions = center.map((c) => ({
   value: c.id,
   label: c.c_name,
@@ -46,4 +56,9 @@ export const centerOptions = center.map((c) => ({
 export const ivacOptions = ivac.map((c) => ({
   value: c.id,
   label: c.ivac_name,
+}));
+
+export const visaOptions = visa.map((c) => ({
+  value: c.id,
+  label: c.type_name,
 }));

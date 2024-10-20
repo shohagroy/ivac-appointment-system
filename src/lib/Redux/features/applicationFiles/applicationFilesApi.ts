@@ -17,7 +17,7 @@ const applicationFilesApi = baseApiSlice.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["application-files"],
+      invalidatesTags: ["application-files", "service-slug"],
     }),
 
     deleteFile: builder.mutation({

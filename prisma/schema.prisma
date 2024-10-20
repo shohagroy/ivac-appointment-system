@@ -67,6 +67,7 @@ model ServiceSlug {
   id       String  @id @default(uuid())
   center   Int
   ivac     Int
+  visa     Int?
   phone    String?
   otp      String?
   dateSlot String?

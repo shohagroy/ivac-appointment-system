@@ -7,6 +7,7 @@ const create = async (data: ServiceSlug) => {
       data: {
         center: data.center,
         ivac: data.ivac,
+        visa: data.visa,
         phone: data.phone || null,
         asignUserId: data.asignUserId || null,
         otp: data.otp || null,
@@ -27,6 +28,7 @@ const update = async (data: ServiceSlug) => {
     data: {
       center: data?.center,
       ivac: data?.ivac,
+      visa: data?.visa,
       phone: data?.phone,
       asignUserId: data?.asignUserId,
       otp: data?.otp,

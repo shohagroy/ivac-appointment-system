@@ -17,6 +17,9 @@ const update = async (data: VisaFile) => {
   const response = await prisma?.visaFile.update({
     where: { id },
     data: {
+      clientId: data?.clientId,
+      status: data?.status,
+      slugId: data?.slugId,
       appointmentFile: JSON.stringify(data?.appointmentFile),
     },
   });

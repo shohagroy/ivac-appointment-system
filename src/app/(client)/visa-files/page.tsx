@@ -36,18 +36,9 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 
 const validateSchema = Yup.object().shape({
-  client: Yup.string().required("Client is required"),
-  webFile: Yup.string().required("Row Appointment File is required"),
+  clientId: Yup.string().required("Client is required"),
+  appointmentFile: Yup.string().required("Row Appointment File is required"),
 });
-
-const formatDate = (isoString: Date): string => {
-  const date = new Date(isoString);
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-};
 
 const ClientsListing = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
@@ -78,10 +69,8 @@ const ClientsListing = () => {
   const updateHandler = (id: string) => {
     const selected = allFiles?.data?.find((item: VisaFile) => item?.id === id);
 
-    setFileInfo({
-      clientId: selected?.clientId,
-      appointmentFile: selected?.appointmentFile as string,
-    });
+    console.log(selected);
+    setFileInfo(selected);
     setIsOpenDrawer(true);
   };
 
@@ -326,7 +315,7 @@ const ClientsListing = () => {
                 fontWeight: "bold",
               }}
             >
-              {searchAbleData?.length ?? 0}
+              {allFiles?.data?.length ?? 0}
             </span>
           </Typography>
 

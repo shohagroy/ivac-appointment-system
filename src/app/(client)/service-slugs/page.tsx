@@ -9,7 +9,7 @@ import GlobalLoader from "@/components/GlobalLoader";
 import GlobalModal from "@/components/Modals/GlobalModal";
 import PageHeader from "@/components/PageHeader";
 import GlobalTable from "@/components/Tables/GlobalTable";
-import { centerOptions, ivacOptions } from "@/constanse/visa";
+import { centerOptions, ivacOptions, visaOptions } from "@/constanse/visa";
 import { useGetAllClientsQuery } from "@/lib/Redux/features/clients/clientApi";
 import {
   useCreateServiceSlugMutation,
@@ -30,7 +30,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Client, VisaFile } from "@prisma/client";
+import { Client, ServiceSlug, VisaFile } from "@prisma/client";
 import { FormikValues } from "formik";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -95,16 +95,12 @@ const ClientsListing = () => {
 
   const servicesSlug = allServiceSlugs?.data;
 
-  console.log(servicesSlug);
-
   const updateHandler = (id: string) => {
     const selected = allServiceSlugs?.data?.find(
-      (item: VisaFile) => item?.id === id
+      (item: ServiceSlug) => item?.id === id
     );
 
-    // setSlugInfo({
-    //   appointmentFile: selected?.appointmentFile as string,
-    // });
+    setSlugInfo(selected);
     setIsOpenDrawer(true);
   };
 
@@ -153,6 +149,7 @@ const ClientsListing = () => {
   };
 
   const deleteUserHandler = async () => {
+    console.log(slugInfo);
     try {
       const res = await deleteServiceSlug({ id: slugInfo?.id }).unwrap();
       if (res.success) {
@@ -212,9 +209,9 @@ const ClientsListing = () => {
 
   const tableHeaders = [
     {
-      label: "Company Name",
+      label: "Identifier",
       align: "left",
-      width: "150px",
+      width: "100px",
     },
 
     {
@@ -238,6 +235,11 @@ const ClientsListing = () => {
       width: "300px",
     },
     {
+      label: "Asign To",
+      align: "left",
+      width: "100px",
+    },
+    {
       label: "Status",
       align: "left",
       width: "100px",
@@ -249,16 +251,22 @@ const ClientsListing = () => {
     },
   ];
 
-  const filesData = allServiceSlugs?.data?.map((item: any) => {
-    // const file = JSON.parse(item?.appointmentFile);
+  const filesData = allServiceSlugs?.data?.map((item: any, i: number) => {
     return {
       _id: item?.id,
-      clientData: item?.client?.companyName,
-      files: "",
-      mission: "",
-      ivac: "",
-      visaType: "",
+      Identifier: `Slug - ${i + 1}`,
+      webFile: item?.visaFiles
+        ?.map((file: VisaFile) => {
+          const webFile = JSON.parse(file?.appointmentFile as string);
+          return webFile?.info?.length;
+        })
+        .reduce((a: number, b: number) => a + b, 0),
+      mission: centerOptions.find((c) => c.value === item?.center)?.label,
+      ivac: ivacOptions.find((c) => c.value === item?.ivac)?.label,
+      visaType: visaOptions.find((v) => v.value === item?.visa)?.label,
+      asignTo: item?.asignUser?.username,
       status: item?.status ? "Completed" : "Uncompleted",
+      navigateTo: `/service-slugs/${item?.id}`,
     };
   });
 
@@ -508,6 +516,16 @@ const ClientsListing = () => {
               label="Select IVAC center"
               required
               placeholder="Select IVAC Mission"
+            />
+          </Box>
+
+          <Box marginTop={"16px"}>
+            <FormSelectField
+              options={visaOptions}
+              name="visa"
+              label="Select Visa Type"
+              required
+              placeholder="Select Visa Type"
             />
           </Box>
 

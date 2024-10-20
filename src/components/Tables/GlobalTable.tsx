@@ -77,9 +77,9 @@ const GlobalTable: React.FC<IProps> = ({
     setPage(0);
   };
 
-  const navigateHandler = (id: string) => {
+  const navigateHandler = (link: string) => {
     if (isNavigate) {
-      router.push(`clients/${id}`);
+      router.push(link);
     }
   };
 
@@ -124,67 +124,70 @@ const GlobalTable: React.FC<IProps> = ({
           <TableBody>
             {(tableItems || [])
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              ?.map((item, index) => (
-                <StyledTableRow
-                  isDeactive={
-                    item?.status === "Deactive" ||
-                    item?.status === "Uncompleted"
-                  }
-                  key={index}
-                >
-                  {Object.keys(item).map((key, index) => {
-                    return (
-                      key !== "_id" && (
-                        <StyledTableCell
-                          onClick={() => navigateHandler(item?._id)}
-                          key={index}
-                          sx={{
-                            cursor: "pointer",
-                          }}
-                        >
-                          {item[key as keyof typeof item]}
-                        </StyledTableCell>
-                      )
-                    );
-                  })}
+              ?.map((item, index) => {
+                return (
+                  <StyledTableRow
+                    onClick={() => navigateHandler(item?.navigateTo as string)}
+                    isDeactive={
+                      item?.status === "Deactive" ||
+                      item?.status === "Uncompleted"
+                    }
+                    key={index}
+                  >
+                    {Object.keys(item).map((key, index) => {
+                      return (
+                        key !== "_id" &&
+                        key !== "navigateTo" && (
+                          <StyledTableCell
+                            key={index}
+                            sx={{
+                              cursor: "pointer",
+                            }}
+                          >
+                            {item[key as keyof typeof item]}
+                          </StyledTableCell>
+                        )
+                      );
+                    })}
 
-                  {(updateHandler || deleteHandler) && (
-                    <StyledTableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={1}
-                        justifyContent="center"
-                      >
-                        {updateHandler && (
-                          <IconButton
-                            disabled={
-                              loginUser?.role !== "super_admin" &&
-                              loginUser?.role !== "admin" &&
-                              loginUser?.id !== item?._id
-                            }
-                            onClick={() => updateHandler(item?._id as string)}
-                            color="primary"
-                          >
-                            <DriveFileRenameOutline />
-                          </IconButton>
-                        )}
-                        {deleteHandler && (
-                          <IconButton
-                            disabled={
-                              loginUser?.role !== "super_admin" &&
-                              loginUser?.role !== "admin"
-                            }
-                            onClick={() => deleteHandler(item?._id as string)}
-                            color="error"
-                          >
-                            <Clear />
-                          </IconButton>
-                        )}
-                      </Stack>
-                    </StyledTableCell>
-                  )}
-                </StyledTableRow>
-              ))}
+                    {(updateHandler || deleteHandler) && (
+                      <StyledTableCell align="center">
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          justifyContent="center"
+                        >
+                          {updateHandler && (
+                            <IconButton
+                              disabled={
+                                loginUser?.role !== "super_admin" &&
+                                loginUser?.role !== "admin" &&
+                                loginUser?.id !== item?._id
+                              }
+                              onClick={() => updateHandler(item?._id as string)}
+                              color="primary"
+                            >
+                              <DriveFileRenameOutline />
+                            </IconButton>
+                          )}
+                          {deleteHandler && (
+                            <IconButton
+                              disabled={
+                                loginUser?.role !== "super_admin" &&
+                                loginUser?.role !== "admin"
+                              }
+                              onClick={() => deleteHandler(item?._id as string)}
+                              color="error"
+                            >
+                              <Clear />
+                            </IconButton>
+                          )}
+                        </Stack>
+                      </StyledTableCell>
+                    )}
+                  </StyledTableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>
