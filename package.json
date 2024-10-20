@@ -15,7 +15,7 @@
     "generate:dev": "env-cmd -f .env.dev -- npx prisma generate",
     "migrate:prod": "env-cmd -f .env.prod -- npx prisma migrate deploy",
     "generate:prod": "env-cmd -f .env.prod -- npx prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
