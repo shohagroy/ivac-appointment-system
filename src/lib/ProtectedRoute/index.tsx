@@ -3,7 +3,11 @@
 import React, { ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import GlobalLoader from "@/components/GlobalLoader";
-import { useGetLoginUserQuery } from "../Redux/features/auth/authApi";
+import {
+  useGetAllUserQuery,
+  useGetLoginUserQuery,
+} from "../Redux/features/auth/authApi";
+import { useGetAllClientsQuery } from "../Redux/features/clients/clientApi";
 
 export default function ProtectedRouteHOC<P extends object>(
   WrappedComponent: ComponentType<P>
@@ -12,9 +16,11 @@ export default function ProtectedRouteHOC<P extends object>(
     const { data, isLoading } = useGetLoginUserQuery({});
     const router = useRouter();
 
+    const { isLoading: userLoading } = useGetAllUserQuery({});
+
     const loginUser = data?.data;
 
-    if (isLoading) {
+    if (isLoading || userLoading) {
       return <GlobalLoader height="100vh" />;
     }
 

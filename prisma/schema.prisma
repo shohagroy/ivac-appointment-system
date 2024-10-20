@@ -12,8 +12,7 @@ enum Role {
   admin
 }
 
-// new code start here
-
+// User model with relation to ServiceSlug (one user can have multiple slugs)
 model User {
   id       String  @id @default(uuid())
   username String  @unique()
@@ -23,6 +22,9 @@ model User {
   contact  String
   isActive Boolean @default(false)
 
+  // One-to-many relationship: One user can have many service slugs
+  serviceSlugs ServiceSlug[] @relation("UserToServiceSlugs")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -30,14 +32,15 @@ model User {
 }
 
 model Client {
-  id          String     @id @default(uuid())
-  companyName String     @unique()
+  id          String  @id @default(uuid())
+  companyName String  @unique()
   propritor   String
-  email       String     @unique
+  email       String  @unique
   contact     String
   address     String
-  isActive    Boolean    @default(false)
-  visaFiles   VisaFile[]
+  isActive    Boolean @default(false)
+
+  visaFiles VisaFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -53,8 +56,31 @@ model VisaFile {
   clientId String
   client   Client @relation(fields: [clientId], references: [id])
 
+  slugId      String?
+  serviceSlug ServiceSlug? @relation(fields: [slugId], references: [id], name: "ServiceSlugToVisaFiles")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ServiceSlug {
+  id       String  @id @default(uuid())
+  center   Int
+  ivac     Int
+  phone    String?
+  otp      String?
+  dateSlot String?
+  timeSlot Json?
+
+  asignUserId String?
+  asignUser   User?   @relation(fields: [asignUserId], references: [id], name: "UserToServiceSlugs")
+
+  visaFiles VisaFile[] @relation("ServiceSlugToVisaFiles")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services_slug")
 }
 
 enum Gender {

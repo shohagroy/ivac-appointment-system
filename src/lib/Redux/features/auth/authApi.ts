@@ -1,5 +1,5 @@
 import { baseApiSlice } from "../baseApi/baseApiSlice";
-import { setLoggedInUser } from "./authSlice";
+import { setAllUsers, setLoggedInUser } from "./authSlice";
 
 const authApi = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,7 +30,27 @@ const authApi = baseApiSlice.injectEndpoints({
       },
       providesTags: ["user"],
     }),
+
+    getAllUser: builder.query({
+      query: () => ({
+        url: "/auth/get-all",
+        method: "GET",
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          if (data?.success) {
+            dispatch(setAllUsers(data?.data));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      providesTags: ["user"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useGetLoginUserQuery } = authApi;
+export const { useLoginMutation, useGetLoginUserQuery, useGetAllUserQuery } =
+  authApi;

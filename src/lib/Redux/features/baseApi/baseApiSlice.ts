@@ -9,6 +9,6 @@ export const baseApiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ["user", "clients", "application-files"],
+  tagTypes: ["user", "clients", "application-files", "service-slug"],
   endpoints: () => ({}),
 });

@@ -3,6 +3,7 @@ import { Client } from "@prisma/client";
 
 const create = async (data: Client) => {
   const response = await prisma.client.create({ data });
+  return response;
 };
 
 const update = async (data: Client) => {

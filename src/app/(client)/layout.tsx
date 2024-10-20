@@ -6,10 +6,8 @@ import { Box, Drawer, LinearProgress } from "@mui/material";
 import React, { Suspense, useState } from "react";
 import {
   AssuredWorkload,
+  BackupTable,
   BarChart,
-  Business,
-  Description,
-  Diversity3,
   Groups2,
   Message,
   Settings,
@@ -37,44 +35,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       icon: <AssuredWorkload />,
     },
     {
-      label: "Messaging",
-      path: "/messaging",
-      icon: <Message />,
+      label: "Services Slug",
+      path: "/service-slugs",
+      icon: <BackupTable />,
     },
-    // {
-    //   label: "Sales",
-    //   path: "/",
-    //   icon: <Business />,
-    //   subPath: [
-    //     {
-    //       label: "Direct Invoice",
-    //       path: "/sales/direct-invoice",
-    //     },
-    //     {
-    //       label: "Direct Delivery",
-    //       path: "/sales/direct-delivery",
-    //     },
-    //     {
-    //       label: "Sales Orders",
-    //       path: "/sales/sales-orders",
-    //     },
-    //   ],
-    // },
-    // {
-    //   label: "Purchases",
-    //   path: "/purchases",
-    //   icon: <Description />,
-    //   subPath: [
-    //     {
-    //       label: "Purchase Orders",
-    //       path: "/purchases/purchase-orders",
-    //     },
-    //     {
-    //       label: "Purchase Invoices",
-    //       path: "/purchases/purchase-invoices",
-    //     },
-    //   ],
-    // },
+
     {
       label: "Settings",
       path: "/settings",
