@@ -26,6 +26,8 @@ export const POST = async (req: Request) => {
       }
     );
 
+    console.log(response);
+
     // Check if the response requires a redirect
     if (response.data?.redirectUrl) {
       return new Response(
@@ -44,8 +46,8 @@ export const POST = async (req: Request) => {
     }
 
     // If no redirect is required, return the data normally
-    return new Response(JSON.stringify(response.data), {
-      status: response.data.code || 200,
+    return new Response(JSON.stringify(response), {
+      status: 200,
       headers: {
         "Content-Type": "application/json",
       },
