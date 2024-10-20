@@ -15,12 +15,7 @@ import {
   useGetAllFilesQuery,
   useUpdateFileMutation,
 } from "@/lib/Redux/features/applicationFiles/applicationFilesApi";
-import {
-  useCreateClientMutation,
-  useDeleteClientMutation,
-  useGetAllClientsQuery,
-  useUpdateClientMutation,
-} from "@/lib/Redux/features/clients/clientApi";
+import { useGetAllClientsQuery } from "@/lib/Redux/features/clients/clientApi";
 import { openSnackbar } from "@/lib/Redux/features/snackbar/snackbarSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/Redux/store";
 import theme from "@/theme";
@@ -34,7 +29,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Client, AppointmentFile } from "@prisma/client";
+import { Client, VisaFile } from "@prisma/client";
 import { FormikValues } from "formik";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -57,9 +52,9 @@ const formatDate = (isoString: Date): string => {
 const ClientsListing = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
-  const [clientInfo, setClientInfo] = useState<Partial<Client>>({});
+  const [fileInfo, setFileInfo] = useState<Partial<VisaFile>>({});
 
-  const [renderClientsStatus, setRenderClientsStatus] = useState<string>("all");
+  const [renderFileStatus, setRenderFileStatus] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
 
   const loginUser = useAppSelector((state) => state?.auth?.user);
@@ -67,7 +62,8 @@ const ClientsListing = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { data, isLoading: initialLoading } = useGetAllClientsQuery({});
+  const { data: clientResponse, isLoading: initialLoading } =
+    useGetAllClientsQuery({});
 
   const [createFile, { isLoading: createLoading }] = useCreateFileMutation();
 
@@ -80,22 +76,21 @@ const ClientsListing = () => {
   );
 
   const updateHandler = (id: string) => {
-    const selected = data?.data?.find((item: Client) => item?.id === id);
-    setClientInfo(selected);
+    const selected = allFiles?.data?.find((item: VisaFile) => item?.id === id);
+
+    setFileInfo({
+      clientId: selected?.clientId,
+      appointmentFile: selected?.appointmentFile as string,
+    });
     setIsOpenDrawer(true);
   };
 
   const submitHandler = async (values: FormikValues) => {
-    const appointmentFile = JSON.parse(values?.webFile);
+    const appointmentFile = JSON.parse(values?.appointmentFile);
     const data = {
-      client: values?.client,
-      appointmentFile: {
-        token: appointmentFile.apiKey,
-        ...appointmentFile,
-      },
+      clientId: values?.clientId,
+      appointmentFile,
     };
-
-    console.log(data);
 
     let response;
     try {
@@ -104,7 +99,6 @@ const ClientsListing = () => {
       } else {
         response = await updateFile(data).unwrap();
       }
-
       if (response?.success) {
         dispatch(
           openSnackbar({
@@ -113,7 +107,7 @@ const ClientsListing = () => {
           })
         );
         setIsOpenDrawer(false);
-        setClientInfo({});
+        setFileInfo({});
       } else {
         dispatch(
           openSnackbar({
@@ -133,14 +127,14 @@ const ClientsListing = () => {
   };
 
   const openDeleteModal = (id: string) => {
-    const selected = data?.data?.find((item: Client) => item?.id === id);
-    setClientInfo(selected);
+    const selected = allFiles?.data?.find((item: VisaFile) => item?.id === id);
+    setFileInfo(selected);
     setIsOpenDeleteModal(true);
   };
 
   const deleteUserHandler = async () => {
     try {
-      const res = await deleteFile(clientInfo).unwrap();
+      const res = await deleteFile({ id: fileInfo?.id }).unwrap();
       if (res.success) {
         dispatch(
           openSnackbar({
@@ -149,7 +143,7 @@ const ClientsListing = () => {
           })
         );
         setIsOpenDeleteModal(false);
-        setClientInfo({});
+        setFileInfo({});
       } else {
         dispatch(
           openSnackbar({
@@ -169,16 +163,16 @@ const ClientsListing = () => {
     }
   };
 
-  if (initialLoading) {
+  if (initialLoading || allFilesLoading) {
     return <GlobalLoader height="40vh" />;
   }
 
   const filterOptions = [
-    { label: "Active", value: "active" },
-    { label: "Deactive", value: "deactive" },
+    { label: "Uncompleted", value: "uncompleted" },
+    { label: "Completed", value: "completed" },
   ];
 
-  const filteredData = data?.data?.filter((item: Client) => {
+  const filteredData = clientResponse?.data?.filter((item: Client) => {
     return item?.isActive;
   });
 
@@ -204,25 +198,26 @@ const ClientsListing = () => {
       align: "left",
       width: "150px",
     },
+
     {
-      label: "Propritor Name",
-      align: "left",
-      width: "150px",
+      label: "Web File",
+      align: "center",
+      width: "100px",
     },
     {
-      label: "Contact Number",
+      label: "Mission",
       align: "left",
-      width: "200px",
+      width: "100px",
     },
     {
-      label: "E-mail",
+      label: "IVAC",
       align: "left",
-      width: "120px",
+      width: "180px",
     },
     {
-      label: "Address",
+      label: "Type",
       align: "left",
-      width: "120px",
+      width: "300px",
     },
     {
       label: "Status",
@@ -235,6 +230,19 @@ const ClientsListing = () => {
       width: "100px",
     },
   ];
+
+  const filesData = allFiles?.data?.map((item: any) => {
+    const file = JSON.parse(item?.appointmentFile);
+    return {
+      _id: item?.id,
+      clientData: item?.client?.companyName,
+      files: file?.info?.length,
+      mission: file?.info[0]?.center?.c_name,
+      ivac: file?.info[0]?.ivac?.ivac_name,
+      visaType: file?.info[0]?.visa_type?.type_name,
+      status: item?.status ? "Completed" : "Uncompleted",
+    };
+  });
 
   const tableItems = searchAbleData?.map((item: Client) => {
     return {
@@ -272,7 +280,7 @@ const ClientsListing = () => {
           lineHeight: { xs: "18px", md: "24px" },
         }}
       >
-        Are you sure delete this client?
+        Are you sure delete this File?
       </Typography>
 
       <Typography
@@ -285,7 +293,7 @@ const ClientsListing = () => {
           marginTop: "10px",
         }}
       >
-        If you click on the <b>Yes</b> button, this client will be permanently
+        If you click on the <b>Yes</b> button, this file will be permanently
         deleted.
       </Typography>
     </Box>
@@ -324,7 +332,7 @@ const ClientsListing = () => {
 
           <Stack direction="row" gap="10px">
             <Select
-              defaultValue="all"
+              defaultValue="uncompleted"
               size="small"
               sx={{
                 width: "150px",
@@ -341,20 +349,20 @@ const ClientsListing = () => {
               }}
               renderValue={(e: unknown) => {
                 if (e === "all" || e === null || e === undefined) {
-                  return `All Status`;
-                } else if (e === "active") {
-                  return "Active";
+                  return `All Files`;
+                } else if (e === "uncompleted") {
+                  return "Uncompleted";
                 } else {
-                  return "Deactive";
+                  return "Completed";
                 }
               }}
               inputProps={{ "aria-label": "Without label" }}
               MenuProps={{ disableScrollLock: true }}
               onChange={(e) => {
-                setRenderClientsStatus(e.target.value);
+                setRenderFileStatus(e.target.value);
               }}
               onBlur={(e) => {
-                setRenderClientsStatus(e.target.value);
+                setRenderFileStatus(e.target.value);
               }}
             >
               <MenuItem
@@ -417,7 +425,7 @@ const ClientsListing = () => {
 
         <GlobalTable
           tableHeaders={tableHeaders}
-          tableItems={tableItems}
+          tableItems={filesData}
           deleteHandler={openDeleteModal}
           updateHandler={updateHandler}
           loginUser={loginUser}
@@ -435,7 +443,7 @@ const ClientsListing = () => {
             />
             <GlobalButton
               onClick={() => {
-                setClientInfo({});
+                setFileInfo({});
                 setIsOpenDrawer(true);
                 setIsOpenDrawer(true);
               }}
@@ -446,19 +454,19 @@ const ClientsListing = () => {
       </Box>
 
       <GlobalDrawer
-        title={clientInfo?.id ? "Update File info" : "Create new File"}
+        title={fileInfo?.id ? "Update File info" : "Create new File"}
         open={isOpenDrawer}
         setOpen={setIsOpenDrawer}
       >
         <FormProvaider
           submitHandlar={submitHandler}
-          initialValues={clientInfo}
+          initialValues={fileInfo}
           validationSchema={validateSchema}
         >
           <Box marginTop={{ xs: "30px", md: "0px" }}>
             <FormSelectField
               searchableField
-              name="client"
+              name="clientId"
               label="Select Client"
               options={clientData?.map((item: Client) => ({
                 value: item?.id,
@@ -472,7 +480,7 @@ const ClientsListing = () => {
           <Box marginTop={"16px"}>
             <FormInputField
               multiline
-              name="webFile"
+              name="appointmentFile"
               label="Row Appointment File"
               required
               placeholder="Enter Row Appointment File"
@@ -485,7 +493,7 @@ const ClientsListing = () => {
                 onClick={() => {
                   setIsOpenDrawer(false);
                   setIsOpenDrawer(false);
-                  setClientInfo({});
+                  setFileInfo({});
                 }}
                 color="error"
                 title="Cancel"
@@ -493,7 +501,7 @@ const ClientsListing = () => {
 
               <GlobalButton
                 isLoading={createLoading || updateLoading}
-                title={clientInfo?.id ? "Update" : "Create"}
+                title={fileInfo?.id ? "Update" : "Create"}
                 type="submit"
               />
             </Stack>

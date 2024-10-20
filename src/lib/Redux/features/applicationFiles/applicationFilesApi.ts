@@ -17,7 +17,7 @@ const applicationFilesApi = baseApiSlice.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["clients"],
+      invalidatesTags: ["application-files"],
     }),
 
     deleteFile: builder.mutation({
@@ -26,7 +26,7 @@ const applicationFilesApi = baseApiSlice.injectEndpoints({
         method: "DELETE",
         body: data,
       }),
-      invalidatesTags: ["clients"],
+      invalidatesTags: ["application-files"],
     }),
 
     getAllFiles: builder.query({
@@ -34,7 +34,7 @@ const applicationFilesApi = baseApiSlice.injectEndpoints({
         url: "/application-files",
         method: "GET",
       }),
-      providesTags: ["clients"],
+      providesTags: ["application-files"],
     }),
   }),
 });

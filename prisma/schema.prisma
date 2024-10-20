@@ -30,13 +30,14 @@ model User {
 }
 
 model Client {
-  id          String  @id @default(uuid())
-  companyName String  @unique()
+  id          String     @id @default(uuid())
+  companyName String     @unique()
   propritor   String
-  email       String  @unique
+  email       String     @unique
   contact     String
   address     String
-  isActive    Boolean @default(false)
+  isActive    Boolean    @default(false)
+  visaFiles   VisaFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,271 +45,17 @@ model Client {
   @@map("clients")
 }
 
-// schema.prisma
-
 model VisaFile {
-  id              String           @id @default(uuid())
-  client          String // Assuming you will link this to the client's ID
-  status          Boolean          @default(false)
-  appointmentFile AppointmentFile? @relation(fields: [appointmentFileId], references: [id])
+  id              String  @id @default(uuid())
+  status          Boolean @default(false)
+  appointmentFile Json
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  appointmentFileId String?
 }
-
-model AppointmentFile {
-  id     String @id @default(uuid())
-  apiKey String @map("apiKey")
-  action String
-  resend String @default("0") // As 'resend' in JSON is a string
-
-  info Info[] // One-to-many relationship with Info
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  VisaFile  VisaFile[]
-
-  @@map("appointment_files")
-}
-
-model Info {
-  id            String  @id @default(uuid())
-  web_id        String  @map("web_id")
-  web_id_repeat String  @map("web_id_repeat")
-  passport      String?
-  name          String
-  phone         String
-  email         String
-  amount        Float // Amount is typically stored as a float
-  captcha       String?
-  center        Center  @relation(fields: [center_id], references: [id])
-  center_id     Int     @map("center_id")
-  is_open       Boolean @default(true) @map("is_open")
-
-  ivac    Ivac @relation(fields: [ivac_id], references: [id])
-  ivac_id Int  @map("ivac_id")
-
-  amountChangeData   AmountChangeData @relation(fields: [amountChangeDataId], references: [id])
-  amountChangeDataId Int              @map("amountChangeDataId")
-
-  visa_type    VisaType @relation(fields: [visa_type_id], references: [id])
-  visa_type_id Int      @map("visa_type_id")
-
-  confirm_tos Boolean @default(false) @map("confirm_tos")
-
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  AppointmentFile   AppointmentFile? @relation(fields: [appointmentFileId], references: [id])
-  appointmentFileId String?
-
-  @@map("info")
-}
-
-model Center {
-  id         Int       @id @default(autoincrement())
-  c_name     String    @map("c_name")
-  prefix     String
-  is_delete  Boolean   @default(false) @map("is_delete")
-  created_by String?   @map("created_by")
-  created_at DateTime? @map("created_at")
-  updated_at DateTime? @map("updated_at")
-
-  Info Info[] // One-to-many relationship with Info
-
-  @@map("center")
-}
-
-model Ivac {
-  id                              Int       @id @default(autoincrement())
-  center_info_id                  Int       @map("center_info_id")
-  ivac_name                       String    @map("ivac_name")
-  address                         String
-  prefix                          String
-  ceated_on                       DateTime  @map("ceated_on") // Note the spelling from the JSON
-  visa_fee                        Float     @map("visa_fee")
-  is_delete                       Boolean   @default(false) @map("is_delete")
-  created_at                      DateTime  @map("created_at")
-  updated_at                      DateTime? @map("updated_at")
-  app_key                         String    @map("app_key")
-  contact_number                  String?   @map("contact_number")
-  created_by                      String?   @map("created_by")
-  charge                          Float
-  new_visa_fee                    Float     @map("new_visa_fee")
-  old_visa_fee                    Float     @map("old_visa_fee")
-  new_fees_applied_from           DateTime  @map("new_fees_applied_from")
-  notify_fees_from                DateTime  @map("notify_fees_from")
-  max_notification_count          Int       @map("max_notification_count")
-  allow_old_amount_until_new_date Int       @map("allow_old_amount_until_new_date")
-  notification_text_beside_amount String?   @map("notification_text_beside_amount")
-  notification_text_popup         String?   @map("notification_text_popup")
-
-  Info Info[] // One-to-many relationship with Info
-
-  @@map("ivac")
-}
-
-model AmountChangeData {
-  id                              Int      @id @default(autoincrement())
-  allow_old_amount_until_new_date Int      @map("allow_old_amount_until_new_date")
-  max_notification_count          Int      @map("max_notification_count")
-  old_visa_fees                   Float    @map("old_visa_fees")
-  new_fees_applied_from           DateTime @map("new_fees_applied_from")
-  notice                          Boolean  @default(false)
-  notice_short                    String?  @map("notice_short")
-  notice_popup                    String?  @map("notice_popup")
-  new_visa_fee                    Float    @map("new_visa_fee")
-
-  Info Info[] // One-to-many relationship with Info
-
-  @@map("amount_change_data")
-}
-
-model VisaType {
-  id        Int     @id @default(autoincrement())
-  type_name String  @map("type_name")
-  order     Int
-  is_active Boolean @default(true) @map("is_active")
-
-  Info Info[] // One-to-many relationship with Info
-
-  @@map("visa_type")
-}
-
-// model VisaFile {
-//   id              String           @id @default(uuid())
-//   client          String
-//   status          Boolean          @default(false)
-//   appointmentFile AppointmentFile?
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   @@map("visa_files")
-// }
-
-// model AppointmentFile {
-//   id     String @id @default(uuid())
-//   apiKey String
-//   action String
-//   resend Int    @default(0)
-
-//   visaFileId String?   @unique
-//   visaFile   VisaFile? @relation(fields: [visaFileId], references: [id])
-
-//   info Info[]
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   @@map("appointment_files")
-// }
-
-// model Info {
-//   id          String  @id @default(uuid())
-//   webId       String
-//   webIdRepeat String
-//   passport    String?
-//   name        String
-//   phone       String
-//   email       String
-//   amount      Float
-//   captcha     String?
-//   isOpen      Boolean @default(false)
-
-//   center   Center @relation(fields: [centerId], references: [id])
-//   centerId Int
-
-//   ivac   Ivac @relation(fields: [ivacId], references: [id])
-//   ivacId Int
-
-//   amountChangeData   AmountChangeData @relation(fields: [amountChangeDataId], references: [id])
-//   amountChangeDataId Int
-
-//   visaType   VisaType @relation(fields: [visaTypeId], references: [id])
-//   visaTypeId Int
-
-//   confirmTos Boolean @default(false)
-
-//   AppointmentFile   AppointmentFile @relation(fields: [appointmentFileId], references: [id])
-//   appointmentFileId String
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   @@map("info")
-// }
-
-// model Center {
-//   id        Int       @id @default(autoincrement())
-//   cName     String
-//   prefix    String
-//   isDelete  Boolean   @default(false)
-//   createdBy String?
-//   createdAt DateTime?
-//   updatedAt DateTime?
-
-//   Info Info[]
-
-//   @@map("center")
-// }
-
-// model Ivac {
-//   id                           Int       @id @default(autoincrement())
-//   centerInfoId                 Int
-//   ivacName                     String
-//   address                      String
-//   prefix                       String
-//   createdOn                    DateTime
-//   visaFee                      Float
-//   isDelete                     Boolean   @default(false)
-//   createdAt                    DateTime
-//   updatedAt                    DateTime?
-//   appKey                       String
-//   contactNumber                String?
-//   createdBy                    String?
-//   charge                       Float
-//   newVisaFee                   Float
-//   oldVisaFee                   Float
-//   newFeesAppliedFrom           DateTime
-//   notifyFeesFrom               DateTime
-//   maxNotificationCount         Int
-//   allowOldAmountUntilNewDate   Int
-//   notificationTextBesideAmount String?
-//   notificationTextPopup        String?
-
-//   Info Info[]
-
-//   @@map("ivac")
-// }
-
-// model AmountChangeData {
-//   id                         Int      @id @default(autoincrement())
-//   allowOldAmountUntilNewDate Int
-//   maxNotificationCount       Int
-//   oldVisaFees                Float
-//   newFeesAppliedFrom         DateTime
-//   notice                     Boolean  @default(false)
-//   noticeShort                String?
-//   noticePopup                String?
-//   newVisaFee                 Float
-
-//   Info Info[]
-
-//   @@map("amount_change_data")
-// }
-
-// model VisaType {
-//   id        Int     @id @default(autoincrement())
-//   type_name String
-//   order     Int
-//   isActive  Boolean @default(true)
-
-//   Info Info[]
-
-//   @@map("visa_type")
-// }
 
 enum Gender {
   male

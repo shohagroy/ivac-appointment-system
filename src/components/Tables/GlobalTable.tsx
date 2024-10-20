@@ -126,7 +126,10 @@ const GlobalTable: React.FC<IProps> = ({
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               ?.map((item, index) => (
                 <StyledTableRow
-                  isDeactive={item?.status === "Deactive"}
+                  isDeactive={
+                    item?.status === "Deactive" ||
+                    item?.status === "Uncompleted"
+                  }
                   key={index}
                 >
                   {Object.keys(item).map((key, index) => {

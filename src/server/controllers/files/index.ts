@@ -1,29 +1,43 @@
 import prisma from "@/server/prisma";
-import { VisaFile, Client } from "@prisma/client";
+import { VisaFile } from "@prisma/client";
 
 const create = async (data: VisaFile) => {
-  // const response = await prisma.client.create();
-  // return response;
+  const response = await prisma.visaFile.create({
+    data: {
+      clientId: data?.clientId,
+      status: false,
+      appointmentFile: JSON.stringify(data?.appointmentFile),
+    },
+  });
+  return response;
 };
 
 const update = async (data: VisaFile) => {
-  console.log(data);
-  // const id = data?.id;
-  // const response = await prisma?.client.update({ where: { id }, data });
-  // return response;
+  const id = data?.id;
+  const response = await prisma?.visaFile.update({
+    where: { id },
+    data: {
+      appointmentFile: JSON.stringify(data?.appointmentFile),
+    },
+  });
+  return response;
 };
 
 const deleteOne = async (data: VisaFile) => {
   const id = data?.id;
-  console.log(data);
+  console.log(data?.id, "data");
 
-  // const response = await prisma.client.delete({ where: { id } });
-  // return response;
+  const response = await prisma.visaFile.delete({ where: { id } });
+  return response;
 };
 
 const getAll = async () => {
-  // const response = await prisma.client.findMany({});
-  // return response;
+  const response = await prisma.visaFile.findMany({
+    include: {
+      client: true,
+    },
+  });
+  return response;
 };
 
 const applicationControllers = {

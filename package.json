@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "set NODE_ENV=production&& node server.js",
     "dev:dev": "env-cmd -f .env.dev next dev",
     "dev:prod": "env-cmd -f .env.prod next dev",
     "start:dev": "env-cmd -f .env.dev next dev",
@@ -30,13 +31,15 @@
     "dayjs": "^1.11.13",
     "env-cmd": "^10.1.0",
     "formik": "^2.4.6",
+    "http": "^0.0.1-security",
     "http-status": "^1.7.4",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
-    "next": "14.2.14",
+    "next": "^14.2.14",
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.1.2",
+    "url": "^0.11.4",
     "yup": "^1.4.0"
   },
   "devDependencies": {
@@ -46,6 +49,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.14",
     "prisma": "^5.20.0",
