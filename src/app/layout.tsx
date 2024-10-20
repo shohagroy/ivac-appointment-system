@@ -17,12 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true}>
-        <Providers>
+      <Providers>
+        <body suppressHydrationWarning={true}>
           <Suspense fallback={<LinearProgress />}> {children} </Suspense>
           <GlobalSnackbar />
-        </Providers>
-      </body>
+        </body>
+      </Providers>
     </html>
   );
 }

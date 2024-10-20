@@ -124,4 +124,5 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default ProtectedRouteHOC(DashboardLayout);
+export default DashboardLayout;
+// export default ProtectedRouteHOC(DashboardLayout);

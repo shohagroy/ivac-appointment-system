@@ -8,12 +8,12 @@ import { store } from "../Redux/store";
 
 const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
         <CssBaseline />
         {children}
-      </ThemeProvider>
-    </Provider>
+      </Provider>
+    </ThemeProvider>
   );
 };
 
