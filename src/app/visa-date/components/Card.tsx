@@ -10,7 +10,17 @@ import Actions from "./Actions";
 
 const Card = ({ data }: { data: RequestPayload }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [otpResponse, setOtpResponse] = React.useState(null);
+  const [otpResponse, setOtpResponse] = React.useState({
+    status: "SUCCESS",
+    code: 200,
+    data: {
+      slot_times: [],
+      slot_dates: [],
+      status: true,
+      error_reason: "",
+    },
+    message: [""],
+  });
 
   const [recall, setRecall] = React.useState(10);
   const [errorMessages, setErrorMessages] = React.useState<string[]>([]);

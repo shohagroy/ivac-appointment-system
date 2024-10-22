@@ -4,6 +4,36 @@ import {
 } from "@/app/constens/queueManage";
 import axios from "axios";
 
+import Queue from "bull";
+
+// Create a new Bull queue
+const apiQueue = new Queue("apiQueue", {
+  redis: {
+    host: "127.0.0.1",
+    port: 6379,
+  },
+});
+
+apiQueue.process(async (job, done) => {
+  try {
+    const { data } = job;
+    const response = await axios.post(
+      "https://payment.ivacbd.com/api/v1/queue-manage",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 15000,
+      }
+    );
+
+    done(null, response.data);
+  } catch (error) {
+    done(error as Error);
+  }
+});
+
 export const POST = async (req: Request) => {
   const body = await req.json();
 

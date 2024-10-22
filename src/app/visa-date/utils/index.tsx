@@ -17,7 +17,7 @@ export const getOtp = async (
         headers: {
           "Content-Type": "application/json",
         },
-        timeout: 50000,
+        // timeout: 50000,
       });
       if (response?.data?.code !== 200) {
         if (attempt + 1 < recall) {
