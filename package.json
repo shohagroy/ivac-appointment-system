@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "set NODE_ENV=production&& node server.js",
+    "start": "next start",
+    "start:preview": "set NODE_ENV=production && node server.js",
     "build": "next build",
     "dev:dev": "env-cmd -f .env.dev next dev",
     "dev:prod": "env-cmd -f .env.prod next dev",
