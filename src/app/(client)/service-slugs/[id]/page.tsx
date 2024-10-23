@@ -11,7 +11,16 @@ import {
 import { useGetAllServiceSlugQuery } from "@/lib/Redux/features/serviceSlug/serviceSlugApi";
 import { openSnackbar } from "@/lib/Redux/features/snackbar/snackbarSlice";
 import { useAppDispatch } from "@/lib/Redux/store";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { ServiceSlug, User, VisaFile } from "@prisma/client";
 import { FormikValues } from "formik";
 import React from "react";
@@ -39,6 +48,8 @@ const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
     asignUser?: User;
     visaFiles?: VisaFile[];
   };
+
+  console.log(selectedSlug);
 
   const totalWebFilesCount = selectedSlug?.visaFiles
     ?.map((file) => {
@@ -282,6 +293,51 @@ const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
                 </Box>
               </FormProvaider>
             </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Box
+        sx={{
+          paddingX: "5%",
+          my: "2rem",
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Paper sx={{ padding: "1rem" }}>
+              <Typography
+                variant="h2"
+                sx={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                }}
+              >
+                Web Files -2
+              </Typography>
+
+              <Box marginY="10px">
+                <List disablePadding>
+                  <ListItem
+                    disablePadding
+                    sx={{
+                      display: "listItem",
+                    }}
+                  >
+                    <ListItemText primary="one" />
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemText primary="two" />
+                  </ListItem>
+                </List>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            2
+          </Grid>
+          <Grid item xs={4}>
+            3
           </Grid>
         </Grid>
       </Box>
