@@ -20,7 +20,7 @@ import theme from "@/theme";
 import GlobalModal from "../Modals/GlobalModal";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { useAppSelector } from "@/lib/Redux/store";
+import { useAppDispatch, useAppSelector } from "@/lib/Redux/store";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -78,7 +78,8 @@ const TopNav: React.FC<HeaderProps> = ({ setOpen, open }) => {
   const router = useRouter();
 
   const logoutHandlar = (): void => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.replace("/login");
     setLogoutModal(false);
   };

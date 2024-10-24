@@ -11,13 +11,15 @@ import {
 import { useGetAllServiceSlugQuery } from "@/lib/Redux/features/serviceSlug/serviceSlugApi";
 import { openSnackbar } from "@/lib/Redux/features/snackbar/snackbarSlice";
 import { useAppDispatch } from "@/lib/Redux/store";
+import theme from "@/theme";
+import { Close } from "@mui/icons-material";
 import {
+  alpha,
   Box,
   Button,
+  CircularProgress,
   Grid,
-  List,
-  ListItem,
-  ListItemText,
+  IconButton,
   Paper,
   Typography,
 } from "@mui/material";
@@ -27,6 +29,8 @@ import React from "react";
 
 const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
   const dispatch = useAppDispatch();
+  const [deletingIndex, setDeletingIndex] = React.useState<number>(-1);
+
   const { data: slugResponse, isLoading: initialLoading } =
     useGetAllServiceSlugQuery({});
 
@@ -48,8 +52,6 @@ const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
     asignUser?: User;
     visaFiles?: VisaFile[];
   };
-
-  console.log(selectedSlug);
 
   const totalWebFilesCount = selectedSlug?.visaFiles
     ?.map((file) => {
@@ -139,6 +141,53 @@ const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
         );
       }
     }
+  };
+
+  const removeHandlar = async (fielId: string, index: number) => {
+    setDeletingIndex(index);
+
+    const data = {
+      slugId: null,
+      id: fielId,
+    };
+
+    let response;
+
+    try {
+      response = await updateFile(data).unwrap();
+      if (response?.success) {
+        dispatch(
+          openSnackbar({
+            message: response?.message,
+            type: "success",
+          })
+        );
+      } else {
+        dispatch(
+          openSnackbar({
+            message: response?.message || "Something went wrong",
+            type: "error",
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        openSnackbar({
+          message: response?.message || "Something went wrong",
+          type: "error",
+        })
+      );
+    }
+  };
+
+  const formattedDate = (date: Date) => {
+    const d = new Date(date);
+    const daysDifference = Math.round(
+      (new Date().getTime() - d.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return `${d.getDate()} ${d
+      .toLocaleString("default", { month: "short" })
+      .toUpperCase()}, ${d.getFullYear()} (${daysDifference} Days)`;
   };
 
   return (
@@ -303,43 +352,126 @@ const ServiceSlugDetails = ({ params }: { params: { id: string } }) => {
           my: "2rem",
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Paper sx={{ padding: "1rem" }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                }}
-              >
-                Web Files -2
-              </Typography>
+        {(selectedSlug?.visaFiles?.length ?? -1) > 0 ? (
+          <Grid container spacing={2}>
+            {selectedSlug?.visaFiles?.map((file, index) => {
+              const appointmentFile = JSON.parse(
+                file?.appointmentFile as string
+              );
+              return (
+                <Grid item xs={12} md={6} lg={4} key={index}>
+                  <Paper sx={{ padding: "1rem" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        variant="h2"
+                        sx={{
+                          fontSize: "1rem",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {index + 1}. Web Files - {appointmentFile?.info?.length}
+                      </Typography>
 
-              <Box marginY="10px">
-                <List disablePadding>
-                  <ListItem
-                    disablePadding
-                    sx={{
-                      display: "listItem",
-                    }}
-                  >
-                    <ListItemText primary="one" />
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemText primary="two" />
-                  </ListItem>
-                </List>
-              </Box>
-            </Paper>
+                      <IconButton
+                        onClick={removeHandlar.bind(null, file?.id, index)}
+                        color="error"
+                        size="small"
+                        sx={{
+                          bgcolor: alpha(
+                            theme.colorConstants.crossRed as string,
+                            0.1
+                          ),
+                        }}
+                      >
+                        {updateLoading && deletingIndex === index ? (
+                          <CircularProgress
+                            size="20px"
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <Close />
+                        )}
+                      </IconButton>
+                    </Box>
+
+                    <Box sx={{ marginTop: "5px", minHeight: "100px" }}>
+                      {appointmentFile?.info?.map((info: any, i: number) => {
+                        return (
+                          <Box key={i}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                              }}
+                            >
+                              <Typography>{i + 1}.</Typography>
+                              <Box sx={{ marginLeft: "10px" }}>
+                                <Typography sx={{ fontWeight: "600" }}>
+                                  {info?.web_id}
+                                </Typography>
+                                <Typography>{info?.name}</Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+
+                    <Box
+                      sx={{
+                        marginTop: "10px",
+                        padding: "5px",
+                        borderRadius: "5px",
+                        bgcolor: alpha(
+                          theme.colorConstants.crossRed as string,
+                          0.1
+                        ),
+                      }}
+                    >
+                      <Typography>
+                        {formattedDate(
+                          file?.createdAt ?? new Date().toISOString()
+                        )}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: theme.colorConstants.crossRed,
+                          fontWeight: 600,
+                        }}
+                      >
+                        Pending
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Grid>
+              );
+            })}
           </Grid>
-          <Grid item xs={4}>
-            2
-          </Grid>
-          <Grid item xs={4}>
-            3
-          </Grid>
-        </Grid>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "40vh",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                textAlign: "center",
+              }}
+            >
+              No file added in this Slug - {slugIndex + 1}.
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );

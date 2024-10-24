@@ -81,6 +81,8 @@ export const DELETE = catchAsync(
 
     const data = await req.json();
 
+    console.log(data);
+
     if (!user?.username && user?.role !== Role.super_admin) {
       throw new ApiError(
         httpStatus.UNAUTHORIZED,
